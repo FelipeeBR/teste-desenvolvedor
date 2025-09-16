@@ -90,6 +90,12 @@ return [
             'driver' => 'octane',
         ],
 
+        'mysql' => [
+            'driver' => 'database',
+            'table' => 'cache',
+            'connection' => env('DB_CONNECTION', 'mysql'),
+        ],
+
     ],
 
     /*

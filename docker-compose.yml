@@ -1,0 +1,56 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: app-teste
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: db_curriculo
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+    working_dir: /app
+    command: php artisan serve --host=0.0.0.0 --port=8000
+
+  queue:
+    build: .
+    container_name: app-queue-worker
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - app
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_DATABASE: db_curriculo
+      DB_USERNAME: admin
+      DB_PASSWORD: admin123
+    working_dir: /app
+    command: php artisan queue:work --sleep=3 --tries=3
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: db-teste-dev
+    environment:
+      MYSQL_ROOT_PASSWORD: secret123
+      MYSQL_DATABASE: db_curriculo
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin123
+    volumes:
+      - db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  db-data:
