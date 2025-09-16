@@ -4,12 +4,18 @@ namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\TestCase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 class CurriculumTest extends TestCase
 {
     use RefreshDatabase;
 
     public function test_can_create_curriculum() {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
         $response = $this->post('/api/curriculum/create', [
             'name' => 'John Doe',
             'email' => 'pBc9d@example.com',
@@ -17,93 +23,162 @@ class CurriculumTest extends TestCase
             'position' => 'Software Engineer',
             'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(201)->assertJsonStructure(['id', 'name', 'email']);
+        $response->assertStatus(201)->assertJsonStructure([
+            'message',
+            'curriculum' => [
+                'id',
+                'name',
+                'email',
+            ]
+        ]);
     }
 
     public function test_cannot_create_curriculum_without_name() {
-        $response = $this->post('/api/curriculum/create', [
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
             'email' => 'pBc9d@example.com',
             'phone' => '1234567890',
             'position' => 'Software Engineer',
-            'education' => 'Bachelor of Science in Computer Science',
+            'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['name']
+            ]);
     }
 
+
     public function test_cannot_create_curriculum_without_email() {
-        $response = $this->post('/api/curriculum/create', [
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
             'name' => 'John Doe',
             'phone' => '1234567890',
             'position' => 'Software Engineer',
-            'education' => 'Bachelor of Science in Computer Science',
+            'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['email']
+            ]);
     }
 
     public function test_cannot_create_curriculum_without_phone() {
-        $response = $this->post('/api/curriculum/create', [
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
             'name' => 'John Doe',
             'email' => 'pBc9d@example.com',
             'position' => 'Software Engineer',
-            'education' => 'Bachelor of Science in Computer Science',
+            'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['phone']
+            ]);
     }
 
     public function test_cannot_create_curriculum_without_position() {
-        $response = $this->post('/api/curriculum/create', [
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
             'name' => 'John Doe',
             'email' => 'pBc9d@example.com',
             'phone' => '1234567890',
-            'education' => 'Bachelor of Science in Computer Science',
+            'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['position']
+            ]);
     }
 
     public function test_cannot_create_curriculum_without_education() {
-        $response = $this->post('/api/curriculum/create', [
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
             'name' => 'John Doe',
             'email' => 'pBc9d@example.com',
             'phone' => '1234567890',
             'position' => 'Software Engineer',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-            'file_name' => 'curriculum.pdf',
-            'file_path' => 'storage/curriculum.pdf',
+            'file' => $file,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['education']
+            ]);
     }
 
     public function test_cannot_create_curriculum_without_file() {
-        $response = $this->post('/api/curriculum/create', [
+        $response = $this->postJson('/api/curriculum/create', [
             'name' => 'John Doe',
             'email' => 'pBc9d@example.com',
             'phone' => '1234567890',
             'position' => 'Software Engineer',
-            'education' => 'Bachelor of Science in Computer Science',
+            'education' => 'Ensino Médio',
             'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'file' => null,
         ]);
 
-        $response->assertStatus(422);
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['file']
+            ]);
+    }
+
+    public function test_cannot_create_curriculum_with_size_file() {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.pdf', 2048);
+
+        $response = $this->postJson('/api/curriculum/create', [
+            'name' => 'John Doe',
+            'email' => 'pBc9d@example.com',
+            'phone' => '1234567890',
+            'position' => 'Software Engineer',
+            'education' => 'Ensino Médio',
+            'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['file']
+            ]);
     }
 }
