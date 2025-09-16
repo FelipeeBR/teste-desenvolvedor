@@ -1,61 +1,68 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Teste Desenvolvedor Full Stack no Paytour
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Passos para instalar e testar
 
-## About Laravel
+1. Clonar o repositorio
+   ```
+   git clone https://github.com/FelipeeBR/teste-desenvolvedor
+   ```
+2. Configurar o .env
+   Copie o .env.example para .env:
+   
+   Ajuste as variáveis de banco de dados para o Docker:
+   ```
+    DB_CONNECTION=mysql
+    DB_HOST=db
+    DB_PORT=3306
+    DB_DATABASE=db_curriculo
+    DB_USERNAME=admin
+    DB_PASSWORD=admin123
+   ```
+   Gere a chave do aplicativo:
+   ```
+   php artisan key:generate
+   ```
+   
+3. Build e start dos containers
+   ```
+   docker-compose up -d --build
+   ```
+   Deve aparecer app-teste, queue e db-teste-dev
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+4. Instalar dependências do Laravel
+   ```
+   docker exec -it app-teste bash
+   composer install
+   ```
+5. Rodar migrations
+   ```
+   docker exec -it app-teste php artisan migrate
+   ```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Testes Unitarios:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- test_can_create_curriculum
+- test_cannot_create_curriculum_without_name
+- test_cannot_create_curriculum_without_email
+- test_cannot_create_curriculum_without_phone
+- test_cannot_create_curriculum_without_position
+- test_cannot_create_curriculum_without_education
+- test_cannot_create_curriculum_without_file
+- test_cannot_create_curriculum_with_size_file
+- test_cannot_create_curriculum_with_extension_file
 
-## Learning Laravel
+#### Para testes no postman, utilize o ```Accept: application/json``` no Postman no headers, e o form-data com os campos/keys tipo text: (name, email, phone, position, education, observations) e campo file do tipo File
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+name = nome
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+email = email
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+phone = telefone
 
-## Laravel Sponsors
+position = cargo prentendido
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+education = escolaridade [Ensino Médio, Graduação, Mestrado, Doutorado]
 
-### Premium Partners
+observations = observações
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+file = para upload do cv
