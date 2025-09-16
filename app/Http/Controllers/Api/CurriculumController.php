@@ -6,11 +6,9 @@ use App\Http\Controllers\Controller;
 use Exception;
 use App\Services\CurriculumService;
 use App\Http\Requests\CurriculumRequest;
-use App\Mail\CurriculumMail;
-use Illuminate\Support\Facades\Mail;
+use App\Jobs\SendCurriculumEmail;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Support\Facades\Log;
 
 class CurriculumController extends Controller
 {
@@ -31,8 +29,17 @@ class CurriculumController extends Controller
             $curriculum = $service->create($validated);
 
             if(!empty($validated['file_path'])) {
-                Mail::to($validated['email'])
-                    ->send(new CurriculumMail($validated['file_real_path'], $validated));
+                $emailData = [
+                    'email' => $validated['email'],
+                    'file_real_path' => $validated['file_real_path'],
+                    'name' => $validated['name'],
+                    'phone' => $validated['phone'],
+                    'position' => $validated['position'],
+                    'education' => $validated['education'],
+                    'observations' => $validated['observations'] ?? null,
+                    'file_name' => $validated['file_name']
+                ];
+                SendCurriculumEmail::dispatch($emailData);
             }
 
             return response()->json([
