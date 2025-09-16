@@ -20,5 +20,6 @@ class Curriculum extends Model
         'file_path',
         'created_at',
         'updated_at',
+        'ip_address'
     ];
 }

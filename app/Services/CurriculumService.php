@@ -15,6 +15,7 @@ class CurriculumService
     }
 
     public function create(array $data): Curriculum {
+        $data['ip_address'] = request()->ip();
         return Curriculum::create($data);
     }
 }

@@ -181,4 +181,26 @@ class CurriculumTest extends TestCase
                 'errors' => ['file']
             ]);
     }
+
+    public function test_cannot_create_curriculum_with_extension_file() {
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->create('curriculo.txt', 1024);
+
+        $response = $this->postJson('/api/curriculum/create', [
+            'name' => 'John Doe',
+            'email' => 'pBc9d@example.com',
+            'phone' => '1234567890',
+            'position' => 'Software Engineer',
+            'education' => 'Ensino Médio',
+            'observations' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonStructure([
+                'message',
+                'errors' => ['file']
+            ]);
+    }
 }

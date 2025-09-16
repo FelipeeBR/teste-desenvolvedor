@@ -29,7 +29,7 @@ class CurriculumController extends Controller
             }
 
             $curriculum = $service->create($validated);
-            Log::info('Curriculum created', ['curriculum' => $curriculum]);
+
             if(!empty($validated['file_path'])) {
                 Mail::to($validated['email'])
                     ->send(new CurriculumMail($validated['file_real_path'], $validated));
@@ -40,10 +40,10 @@ class CurriculumController extends Controller
                 'curriculum' => $curriculum
             ], Response::HTTP_CREATED);
 
-        } catch (Exception $e) {
-            return response()->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         } catch (ValidationException $e) {
             return response()->json(['error' => $e->errors()], Response::HTTP_UNPROCESSABLE_ENTITY);
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], Response::HTTP_UNPROCESSABLE_ENTITY);
         }
     }
 }
