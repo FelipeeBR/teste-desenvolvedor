@@ -22,14 +22,26 @@
    ```
    php artisan key:generate
    ```
+3. Configuração de email, defina o ```MAIL_USERNAME``` e ```MAIL_PASSWORD``` :
+   ```
+   #Mailtrap
+    MAIL_MAILER=smtp
+    MAIL_HOST=sandbox.smtp.mailtrap.io
+    MAIL_PORT=2525
+    MAIL_USERNAME=
+    MAIL_PASSWORD=
+    MAIL_ENCRYPTION=tls
+    MAIL_FROM_ADDRESS=no-reply@meusistema.com
+    MAIL_FROM_NAME="${APP_NAME}"
+   ```
    
-3. Build e start dos containers
+4. Build e start dos containers
    ```
    docker-compose up -d --build
    ```
    Deve aparecer app-teste, queue e db-teste-dev
 
-4. Instalar dependências do Laravel
+5. Instalar dependências do Laravel
    ```
    docker exec -it app-teste bash
    composer install
